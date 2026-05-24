@@ -1,0 +1,11 @@
+App(
+    appid="hello_momentum",
+    name="Hello Momentum",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="hello_momentum_app",
+    stack_size=2 * 1024,
+    fap_category="Examples",
+    fap_author="Eudys",
+    fap_version="0.1",
+    fap_description="Skeleton FAP: scenes, views, persistence",
+)
