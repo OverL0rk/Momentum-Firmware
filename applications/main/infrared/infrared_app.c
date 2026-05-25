@@ -8,6 +8,7 @@
 #include <toolbox/path.h>
 #include <toolbox/saved_struct.h>
 #include <dolphin/dolphin.h>
+#include <audit/audit.h>
 
 #define TAG "InfraredApp"
 
@@ -428,6 +429,7 @@ void infrared_tx_send_once(InfraredApp* infrared) {
     }
 
     dolphin_deed(DolphinDeedIrSend);
+    audit_log_event("IR", "TX", "", "");
     infrared_signal_transmit(infrared->current_signal);
 }
 
@@ -538,7 +540,8 @@ void infrared_signal_received_callback(void* context, InfraredWorkerSignal* rece
     furi_assert(context);
     InfraredApp* infrared = context;
 
-    if(infrared_worker_signal_is_decoded(received_signal)) {
+    bool decoded = infrared_worker_signal_is_decoded(received_signal);
+    if(decoded) {
         infrared_signal_set_message(
             infrared->current_signal, infrared_worker_get_decoded_signal(received_signal));
     } else {
@@ -552,6 +555,8 @@ void infrared_signal_received_callback(void* context, InfraredWorkerSignal* rece
             INFRARED_COMMON_CARRIER_FREQUENCY,
             INFRARED_COMMON_DUTY_CYCLE);
     }
+
+    audit_log_event("IR", "RX", decoded ? "decoded" : "raw", "");
 
     view_dispatcher_send_custom_event(
         infrared->view_dispatcher, InfraredCustomEventTypeSignalReceived);

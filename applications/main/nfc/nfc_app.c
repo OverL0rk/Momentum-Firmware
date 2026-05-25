@@ -5,6 +5,7 @@
 #include <dolphin/dolphin.h>
 #include <loader/firmware_api/firmware_api.h>
 #include <applications/main/archive/helpers/archive_helpers_ext.h>
+#include <audit/audit.h>
 
 bool nfc_custom_event_callback(void* context, uint32_t event) {
     furi_assert(context);
@@ -262,6 +263,20 @@ void nfc_make_app_folders(NfcApp* instance) {
     }
 }
 
+static void nfc_audit_log_device(NfcApp* instance, const char* operation) {
+    NfcProtocol protocol = nfc_device_get_protocol(instance->nfc_device);
+    if(protocol == NfcProtocolInvalid) return;
+
+    size_t uid_len = 0;
+    const uint8_t* uid = nfc_device_get_uid(instance->nfc_device, &uid_len);
+    char uid_str[33] = {0};
+    for(size_t i = 0; i < uid_len && i < 16; i++) {
+        snprintf(uid_str + i * 2, sizeof(uid_str) - i * 2, "%02X", uid[i]);
+    }
+    const char* proto_name = nfc_device_get_protocol_name(protocol);
+    audit_log_event("NFC", operation, uid_str, proto_name ? proto_name : "Unknown");
+}
+
 bool nfc_save_file(NfcApp* instance, FuriString* path) {
     furi_assert(instance);
     furi_assert(path);
@@ -270,6 +285,8 @@ bool nfc_save_file(NfcApp* instance, FuriString* path) {
 
     if(!result) {
         dialog_message_show_storage_error(instance->dialogs, "Cannot save\nkey file");
+    } else {
+        nfc_audit_log_device(instance, "SAVE");
     }
 
     return result;

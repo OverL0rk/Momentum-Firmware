@@ -18,7 +18,7 @@ App(
     # ],
     requires=["region"],
     resources="resources",
-    fap_libs=["assets", "hwdrivers"],
+    fap_libs=["assets", "hwdrivers", "audit"],
     fap_icon="icon.png",
     fap_category="Sub-GHz",
     sdk_headers=["subghz_fap.h"],

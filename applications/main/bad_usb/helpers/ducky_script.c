@@ -8,6 +8,7 @@
 #include "ducky_script.h"
 #include "ducky_script_i.h"
 #include <dolphin/dolphin.h>
+#include <audit/audit.h>
 
 #define TAG "BadUsb"
 
@@ -513,6 +514,17 @@ static int32_t bad_usb_worker(void* context) {
                 bad_usb->script_repeats_done = 0;
                 bad_usb->st.script_repeats_done = 0;
                 bad_usb->st.script_repeats_target = bad_usb->script_repeats_target;
+                {
+                    char details[32];
+                    snprintf(
+                        details,
+                        sizeof(details),
+                        "iface=%s repeats=%u",
+                        *bad_usb->interface == BadUsbHidInterfaceBle ? "BLE" : "USB",
+                        bad_usb->script_repeats_target);
+                    audit_log_event(
+                        "BadKB", "RUN", furi_string_get_cstr(bad_usb->file_path), details);
+                }
             } else if(flags & WorkerEvtDisconnect) {
                 worker_state = BadUsbStateNotConnected; // Disconnected
             }

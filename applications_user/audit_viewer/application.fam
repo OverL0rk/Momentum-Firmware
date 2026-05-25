@@ -1,0 +1,12 @@
+App(
+    appid="audit_viewer",
+    name="Audit Viewer",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="audit_viewer_app",
+    stack_size=2 * 1024,
+    fap_category="Tools",
+    fap_author="Eudys",
+    fap_version="0.1",
+    fap_description="View and configure audit logs (/ext/audit/)",
+    fap_libs=["audit"],
+)
