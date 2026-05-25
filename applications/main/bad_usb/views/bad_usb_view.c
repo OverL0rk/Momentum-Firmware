@@ -41,6 +41,13 @@ static void bad_usb_draw_callback(Canvas* canvas, void* _model) {
     } else {
         uint32_t e = model->state.elapsed;
         furi_string_cat_printf(disp_str, "  %02lu:%02lu.%ld", e / 60 / 1000, e / 1000, e % 1000);
+        if(model->state.script_repeats_target > 1) {
+            furi_string_cat_printf(
+                disp_str,
+                " R:%u/%u",
+                model->state.script_repeats_done + 1,
+                model->state.script_repeats_target);
+        }
     }
     elements_string_fit_width(canvas, disp_str, 128 - 2);
     canvas_draw_str(

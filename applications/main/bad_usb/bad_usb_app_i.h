@@ -56,6 +56,8 @@ struct BadUsbApp {
     BadUsbHidInterface interface;
     BadUsbHidConfig user_hid_cfg;
     BadUsbHidConfig script_hid_cfg;
+
+    uint8_t repeat_count;
 };
 
 typedef enum {

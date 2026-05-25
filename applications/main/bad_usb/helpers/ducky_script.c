@@ -510,6 +510,9 @@ static int32_t bad_usb_worker(void* context) {
                 storage_file_seek(script_file, 0, true);
                 worker_state = BadUsbStateRunning;
                 bad_usb->st.elapsed = 0;
+                bad_usb->script_repeats_done = 0;
+                bad_usb->st.script_repeats_done = 0;
+                bad_usb->st.script_repeats_target = bad_usb->script_repeats_target;
             } else if(flags & WorkerEvtDisconnect) {
                 worker_state = BadUsbStateNotConnected; // Disconnected
             }
@@ -544,6 +547,9 @@ static int32_t bad_usb_worker(void* context) {
                     // If nothing happened - start script execution
                     worker_state = BadUsbStateRunning;
                     bad_usb->st.elapsed = 0;
+                    bad_usb->script_repeats_done = 0;
+                    bad_usb->st.script_repeats_done = 0;
+                    bad_usb->st.script_repeats_target = bad_usb->script_repeats_target;
                 } else if(flags & WorkerEvtStartStop) {
                     worker_state = BadUsbStateIdle;
                     furi_thread_flags_clear(WorkerEvtStartStop);
@@ -595,6 +601,25 @@ static int32_t bad_usb_worker(void* context) {
                     bad_usb->st.state = worker_state;
                     bad_usb->hid->release_all(bad_usb->hid_inst);
                 } else if(delay_val == SCRIPT_STATE_END) { // End of script
+                    bad_usb->script_repeats_done++;
+                    bad_usb->st.script_repeats_done = bad_usb->script_repeats_done;
+                    if(bad_usb->script_repeats_done < bad_usb->script_repeats_target) {
+                        // More repeats remaining: rewind and continue back-to-back
+                        delay_val = 0;
+                        bad_usb->buf_len = 0;
+                        bad_usb->st.line_cur = 0;
+                        bad_usb->defdelay = 0;
+                        bad_usb->stringdelay = 0;
+                        bad_usb->defstringdelay = 0;
+                        bad_usb->repeat_cnt = 0;
+                        bad_usb->key_hold_nb = 0;
+                        bad_usb->file_end = false;
+                        storage_file_seek(script_file, 0, true);
+                        worker_state = BadUsbStateRunning;
+                        bad_usb->st.state = worker_state;
+                        bad_usb->st.elapsed += (furi_get_tick() - start);
+                        continue;
+                    }
                     delay_val = 0;
                     worker_state = BadUsbStateIdle;
                     bad_usb->st.state = BadUsbStateDone;
@@ -763,6 +788,9 @@ BadUsbScript* bad_usb_script_open(
     bad_usb->load_id_cfg = load_id_cfg;
     bad_usb->hid = bad_usb_hid_get_interface(*bad_usb->interface);
 
+    bad_usb->script_repeats_target = 1;
+    bad_usb->script_repeats_done = 0;
+
     bad_usb->thread = furi_thread_alloc_ex("BadUsbWorker", 2048, bad_usb_worker, bad_usb);
     furi_thread_start(bad_usb->thread);
     return bad_usb;
@@ -809,6 +837,12 @@ void bad_usb_script_start_stop(BadUsbScript* bad_usb) {
 void bad_usb_script_pause_resume(BadUsbScript* bad_usb) {
     furi_assert(bad_usb);
     furi_thread_flags_set(furi_thread_get_id(bad_usb->thread), WorkerEvtPauseResume);
+}
+
+void bad_usb_script_set_repeat_count(BadUsbScript* bad_usb, uint8_t count) {
+    furi_assert(bad_usb);
+    if(count < 1) count = 1;
+    bad_usb->script_repeats_target = count;
 }
 
 BadUsbState* bad_usb_script_get_state(BadUsbScript* bad_usb) {

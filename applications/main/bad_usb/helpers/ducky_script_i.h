@@ -48,6 +48,9 @@ struct BadUsbScript {
 
     FuriString* string_print;
     size_t string_print_pos;
+
+    uint8_t script_repeats_target;
+    uint8_t script_repeats_done;
 };
 
 uint16_t ducky_get_keycode(BadUsbScript* bad_usb, const char* param, bool accept_modifiers);

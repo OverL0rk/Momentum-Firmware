@@ -3,10 +3,11 @@
 enum ConfigIndex {
     ConfigIndexKeyboardLayout,
     ConfigIndexConnection,
+    ConfigIndexRepeat,
 };
 
 enum ConfigIndexBle {
-    ConfigIndexBlePersistPairing = ConfigIndexConnection + 1,
+    ConfigIndexBlePersistPairing = ConfigIndexRepeat + 1,
     ConfigIndexBlePairingMode,
     ConfigIndexBleSetDeviceName,
     ConfigIndexBleSetMacAddress,
@@ -16,12 +17,15 @@ enum ConfigIndexBle {
 };
 
 enum ConfigIndexUsb {
-    ConfigIndexUsbSetManufacturerName = ConfigIndexConnection + 1,
+    ConfigIndexUsbSetManufacturerName = ConfigIndexRepeat + 1,
     ConfigIndexUsbSetProductName,
     ConfigIndexUsbSetVidPid,
     ConfigIndexUsbRandomizeVidPid,
     ConfigIndexUsbRestoreDefaults,
 };
+
+#define REPEAT_COUNT_MIN 1
+#define REPEAT_COUNT_MAX 99
 
 void bad_usb_scene_config_connection_callback(VariableItem* item) {
     BadUsbApp* bad_usb = variable_item_get_context(item);
@@ -32,6 +36,15 @@ void bad_usb_scene_config_connection_callback(VariableItem* item) {
     variable_item_set_current_value_text(
         item, bad_usb->interface == BadUsbHidInterfaceBle ? "BLE" : "USB");
     view_dispatcher_send_custom_event(bad_usb->view_dispatcher, ConfigIndexConnection);
+}
+
+void bad_usb_scene_config_repeat_callback(VariableItem* item) {
+    BadUsbApp* bad_usb = variable_item_get_context(item);
+    uint8_t value = variable_item_get_current_value_index(item) + REPEAT_COUNT_MIN;
+    bad_usb->repeat_count = value;
+    char buf[8];
+    snprintf(buf, sizeof(buf), "%u", value);
+    variable_item_set_current_value_text(item, buf);
 }
 
 void bad_usb_scene_config_ble_persist_pairing_callback(VariableItem* item) {
@@ -82,6 +95,22 @@ static void draw_menu(BadUsbApp* bad_usb) {
     variable_item_set_current_value_index(item, bad_usb->interface == BadUsbHidInterfaceBle);
     variable_item_set_current_value_text(
         item, bad_usb->interface == BadUsbHidInterfaceBle ? "BLE" : "USB");
+
+    item = variable_item_list_add(
+        var_item_list,
+        "Repeat",
+        REPEAT_COUNT_MAX - REPEAT_COUNT_MIN + 1,
+        bad_usb_scene_config_repeat_callback,
+        bad_usb);
+    {
+        uint8_t value = bad_usb->repeat_count;
+        if(value < REPEAT_COUNT_MIN) value = REPEAT_COUNT_MIN;
+        if(value > REPEAT_COUNT_MAX) value = REPEAT_COUNT_MAX;
+        variable_item_set_current_value_index(item, value - REPEAT_COUNT_MIN);
+        char buf[8];
+        snprintf(buf, sizeof(buf), "%u", value);
+        variable_item_set_current_value_text(item, buf);
+    }
 
     if(bad_usb->interface == BadUsbHidInterfaceBle) {
         BleProfileHidExtParams* ble_hid_cfg = &bad_usb->script_hid_cfg.ble;

@@ -120,6 +120,13 @@ static void bad_usb_load_settings(BadUsbApp* app) {
                 flipper_format_rewind(fff);
             }
 
+            if(!flipper_format_read_uint32(fff, "repeat_count", &temp_uint, 1) || temp_uint < 1 ||
+               temp_uint > 99) {
+                temp_uint = 1;
+                flipper_format_rewind(fff);
+            }
+            app->repeat_count = (uint8_t)temp_uint;
+
             loaded = true;
         } while(0);
     }
@@ -140,6 +147,7 @@ static void bad_usb_load_settings(BadUsbApp* app) {
         hid_cfg->usb.pid = 0;
         hid_cfg->usb.manuf[0] = '\0';
         hid_cfg->usb.product[0] = '\0';
+        app->repeat_count = 1;
     }
 }
 
@@ -168,6 +176,8 @@ static void bad_usb_save_settings(BadUsbApp* app) {
             if(!flipper_format_write_string_cstr(fff, "usb_product", hid_cfg->usb.product)) break;
             if(!flipper_format_write_uint32(fff, "usb_vid", &hid_cfg->usb.vid, 1)) break;
             if(!flipper_format_write_uint32(fff, "usb_pid", &hid_cfg->usb.pid, 1)) break;
+            temp_uint = app->repeat_count;
+            if(!flipper_format_write_uint32(fff, "repeat_count", &temp_uint, 1)) break;
         } while(0);
     }
 

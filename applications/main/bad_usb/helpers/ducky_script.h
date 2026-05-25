@@ -31,6 +31,8 @@ typedef struct {
     size_t error_line;
     char error[64];
     uint32_t elapsed;
+    uint8_t script_repeats_done;
+    uint8_t script_repeats_target;
 } BadUsbState;
 
 typedef struct BadUsbScript BadUsbScript;
@@ -52,6 +54,8 @@ void bad_usb_script_stop(BadUsbScript* bad_usb);
 void bad_usb_script_start_stop(BadUsbScript* bad_usb);
 
 void bad_usb_script_pause_resume(BadUsbScript* bad_usb);
+
+void bad_usb_script_set_repeat_count(BadUsbScript* bad_usb, uint8_t count);
 
 BadUsbState* bad_usb_script_get_state(BadUsbScript* bad_usb);
 
