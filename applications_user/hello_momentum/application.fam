@@ -4,8 +4,9 @@ App(
     apptype=FlipperAppType.EXTERNAL,
     entry_point="hello_momentum_app",
     stack_size=2 * 1024,
-    fap_category="Examples",
-    fap_author="Eudys",
+    fap_category="OverL0rk/Examples",
+    fap_author="OverL0rk (Eudys Ramirez)",
     fap_version="0.1",
-    fap_description="Skeleton FAP: scenes, views, persistence",
+    fap_description="Skeleton FAP: SceneManager + 4 views + SD persistence",
+    fap_weburl="https://github.com/OverL0rk/Flipper-Apps",
 )

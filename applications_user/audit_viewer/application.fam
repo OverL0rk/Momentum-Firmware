@@ -4,9 +4,10 @@ App(
     apptype=FlipperAppType.EXTERNAL,
     entry_point="audit_viewer_app",
     stack_size=2 * 1024,
-    fap_category="Tools",
-    fap_author="Eudys",
+    fap_category="OverL0rk/Security",
+    fap_author="OverL0rk (Eudys Ramirez)",
     fap_version="0.1",
-    fap_description="View and configure audit logs (/ext/audit/)",
+    fap_description="View and configure cross-subsystem audit logs",
+    fap_weburl="https://github.com/OverL0rk/Momentum-Firmware",
     fap_libs=["audit"],
 )
