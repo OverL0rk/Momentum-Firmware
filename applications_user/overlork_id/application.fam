@@ -1,0 +1,12 @@
+App(
+    appid="overlork_id",
+    name="OverL0rk ID",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="overlork_id_app",
+    stack_size=1 * 1024,
+    fap_category="OverL0rk",
+    fap_description="OverL0rk personal identity card — digital signature of the suite author",
+    fap_author="Eudys Ramirez (OverL0rk)",
+    fap_version="1.0",
+    fap_build_version=True,
+)
