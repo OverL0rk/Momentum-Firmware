@@ -1,0 +1,12 @@
+App(
+    appid="pattern_analyzer",
+    name="Pattern Analyzer",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="pattern_analyzer_app",
+    stack_size=4 * 1024,
+    fap_category="OverL0rk/Security",
+    fap_author="OverL0rk (Eudys Ramirez)",
+    fap_version="0.1",
+    fap_description="Defensive heuristic analysis of audit logs",
+    fap_weburl="https://github.com/OverL0rk/Flipper-Apps",
+)
