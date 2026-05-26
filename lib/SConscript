@@ -48,6 +48,11 @@ libs = env.BuildModules(
         "datetime",
         "ieee754_parse_wrap",
         "audit",
+        "overlork_events",
+        "overlork_rules",
+        "overlork_notify",
+        "overlork_protocol_id",
+        "overlork_crypto",
     ],
 )
 
