@@ -1,0 +1,13 @@
+App(
+    appid="rf_scanner",
+    name="RF Scanner",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="rf_scanner_app",
+    stack_size=2 * 1024,
+    fap_category="OverL0rk/Security",
+    fap_author="OverL0rk (Eudys Ramirez)",
+    fap_version="0.1",
+    fap_description="Passive RF frequency scanner with RSSI and audit logging",
+    fap_weburl="https://github.com/OverL0rk/Momentum-Firmware",
+    fap_libs=["audit"],
+)
