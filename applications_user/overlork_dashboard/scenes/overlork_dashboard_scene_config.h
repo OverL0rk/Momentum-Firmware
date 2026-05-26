@@ -1,0 +1,6 @@
+ADD_SCENE(overlork_dashboard, start, Start)
+ADD_SCENE(overlork_dashboard, stats, Stats)
+ADD_SCENE(overlork_dashboard, log, Log)
+ADD_SCENE(overlork_dashboard, totp, Totp)
+ADD_SCENE(overlork_dashboard, export, Export)
+ADD_SCENE(overlork_dashboard, about, About)
