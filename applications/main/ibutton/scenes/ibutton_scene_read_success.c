@@ -1,5 +1,5 @@
 #include "../ibutton_i.h"
-
+#include <audit/audit.h>
 #include <dolphin/dolphin.h>
 
 void ibutton_scene_read_success_on_enter(void* context) {
@@ -27,6 +27,12 @@ void ibutton_scene_read_success_on_enter(void* context) {
 
     furi_string_reset(tmp);
     ibutton_protocols_render_brief_data(ibutton->protocols, key, tmp);
+
+    /* Audit log: "iButton" / "READ" / brief data / "DS1990A Dallas" */
+    {
+        const char* proto_name = ibutton_protocols_get_name(ibutton->protocols, protocol_id);
+        audit_log_event("iButton", "READ", furi_string_get_cstr(tmp), proto_name);
+    }
 
     widget_add_string_multiline_element(
         widget, 0, 16, AlignLeft, AlignTop, FontSecondary, furi_string_get_cstr(tmp));

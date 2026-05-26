@@ -46,7 +46,6 @@ Header,+,applications/services/power/power_service/power.h,,
 Header,+,applications/services/rpc/rpc_app.h,,
 Header,+,applications/services/storage/storage.h,,
 Header,+,build/icons/assets_icons.h,,
-Header,+,lib/audit/audit.h,,
 Header,+,lib/bit_lib/bit_lib.h,,
 Header,+,lib/ble_profile/extra_profiles/hid_profile.h,,
 Header,+,lib/ble_profile/extra_services/hid_service.h,,
@@ -688,9 +687,6 @@ Function,-,atoff,float,const char*
 Function,+,atoi,int,const char*
 Function,-,atol,long,const char*
 Function,-,atoll,long long,const char*
-Function,+,audit_is_enabled,_Bool,
-Function,+,audit_log_event,void,"const char*, const char*, const char*, const char*"
-Function,+,audit_set_enabled,void,_Bool
 Function,-,basename,char*,const char*
 Function,-,bcmp,int,"const void*, const void*, size_t"
 Function,-,bcopy,void,"const void*, void*, size_t"

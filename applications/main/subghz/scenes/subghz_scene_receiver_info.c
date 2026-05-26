@@ -4,6 +4,7 @@
 
 #include "applications/main/subghz/helpers/subghz_txrx_i.h"
 #include <lib/subghz/blocks/generic.h>
+#include <audit/audit.h>
 
 #define TAG "SubGhzSceneReceiverInfo"
 
@@ -131,6 +132,22 @@ void subghz_scene_receiver_info_on_enter(void* context) {
     subghz_custom_btns_reset();
 
     subghz_scene_receiver_info_draw_widget(subghz);
+
+    /* Audit log: record this SubGhz signal reception */
+    {
+        const char* proto = subghz_history_get_protocol_name(
+            subghz->history, subghz->idx_menu_chosen);
+        FuriString* freq_str = furi_string_alloc();
+        FuriString* mod_str  = furi_string_alloc();
+        subghz_txrx_get_frequency_and_modulation(subghz->txrx, freq_str, mod_str, false);
+        audit_log_event(
+            "SubGhz",
+            "RX",
+            furi_string_get_cstr(freq_str),
+            proto ? proto : "Unknown");
+        furi_string_free(mod_str);
+        furi_string_free(freq_str);
+    }
 
     if(!subghz_history_full(subghz->history) &&
        !scene_manager_has_previous_scene(subghz->scene_manager, SubGhzSceneDecodeRAW)) {

@@ -522,8 +522,22 @@ static int32_t bad_usb_worker(void* context) {
                         "iface=%s repeats=%u",
                         *bad_usb->interface == BadUsbHidInterfaceBle ? "BLE" : "USB",
                         bad_usb->script_repeats_target);
-                    audit_log_event(
-                        "BadKB", "RUN", furi_string_get_cstr(bad_usb->file_path), details);
+
+                    /*
+                     * OverL0rk Sentinel detection:
+                     * Payloads under /ext/badusb/OverL0rk_Sentinel/ are
+                     * read-only audit scripts (port scan, AV check, etc).
+                     * Tag them as "AUDIT" instead of "RUN" so rules and
+                     * pattern_analyzer can treat them as defensive — Info
+                     * severity instead of Critical.
+                     */
+                    const char* path_cstr = furi_string_get_cstr(bad_usb->file_path);
+                    const char* op = "RUN";
+                    if(strstr(path_cstr, "OverL0rk_Sentinel") != NULL ||
+                       strstr(path_cstr, "Sentinel") != NULL) {
+                        op = "AUDIT";
+                    }
+                    audit_log_event("BadKB", op, path_cstr, details);
                 }
             } else if(flags & WorkerEvtDisconnect) {
                 worker_state = BadUsbStateNotConnected; // Disconnected

@@ -1,4 +1,5 @@
 #include "../lfrfid_i.h"
+#include <audit/audit.h>
 
 #define LFRFID_SCENE_READ_SUCCESS_MAX_HEX_WIDTH (7UL)
 
@@ -33,6 +34,9 @@ void lfrfid_scene_read_success_on_enter(void* context) {
 
         furi_string_cat_printf(display_text, "%s%02X", i != 0 ? " " : "", data[i]);
     }
+
+    /* Audit log: "LFRFID" / "READ" / "Hex: XX XX ..." / "HID EM4100" */
+    audit_log_event("LFRFID", "READ", furi_string_get_cstr(display_text), protocol);
 
     free(data);
 

@@ -1,7 +1,6 @@
 #include "subghz_history.h"
 #include <lib/subghz/receiver.h>
 #include <rpc/rpc.h>
-#include <audit/audit.h>
 
 #include <furi.h>
 
@@ -287,22 +286,6 @@ bool subghz_history_add_to_history(
     item->item_str = furi_string_alloc();
     item->flipper_string = flipper_format_string_alloc();
     subghz_protocol_decoder_base_serialize(decoder_base, item->flipper_string, preset);
-
-    {
-        char freq_str[16];
-        snprintf(
-            freq_str,
-            sizeof(freq_str),
-            "%lu.%02luMHz",
-            (unsigned long)(preset->frequency / 1000000),
-            (unsigned long)((preset->frequency / 10000) % 100));
-        char details[64];
-        const char* proto_name = (decoder_base->protocol && decoder_base->protocol->name) ?
-                                     decoder_base->protocol->name :
-                                     "Unknown";
-        snprintf(details, sizeof(details), "%s hash=%08lX", proto_name, (unsigned long)hash_data);
-        audit_log_event("SubGhz", "RX", freq_str, details);
-    }
 
     if(decoder_base->protocol && decoder_base->protocol->decoder &&
        decoder_base->protocol->decoder->get_string_brief) {
