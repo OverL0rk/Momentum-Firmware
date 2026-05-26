@@ -1,0 +1,14 @@
+App(
+    appid="sentinel_runner",
+    name="OverL0rk Sentinel",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="sentinel_runner_app",
+    requires=["gui", "storage"],
+    stack_size=2 * 1024,
+    fap_category="OverL0rk",
+    fap_description="Defensive BadUSB payload index (port scan, AV check, process audit) — auto-extracts ducky scripts to /ext/badusb/OverL0rk_Sentinel/",
+    fap_author="Eudys Ramirez (OverL0rk)",
+    fap_version="1.0",
+    fap_build_version=True,
+    fap_libs=["audit"],
+)
