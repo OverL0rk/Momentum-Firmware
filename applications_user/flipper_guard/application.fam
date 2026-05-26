@@ -1,0 +1,13 @@
+App(
+    appid="flipper_guard",
+    name="FlipperGuard",
+    apptype=FlipperAppType.EXTERNAL,
+    entry_point="flipper_guard_app",
+    stack_size=2 * 1024,
+    fap_category="OverL0rk/Security",
+    fap_author="OverL0rk (Eudys Ramirez)",
+    fap_version="0.2",
+    fap_description="Live audit-log monitor with rule-based severity alerts",
+    fap_weburl="https://github.com/OverL0rk/Momentum-Firmware",
+    fap_libs=["audit", "overlork_events", "overlork_rules", "overlork_notify"],
+)
